@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
+    <link href="styles.css" rel="stylesheet">  
+  </head>
+  <body>
+    <div ng-app="App">
+      <div boolean-pill></div>
+    </div>
+
+    <script>
+      angular.module('App', [])
+        .directive('booleanPill', function() {
+          return {
+            scope: {},
+            transclude: true,
+            /* 
+              Unsure if this is idiomatic?
+            */
+            template: '<boolean-pill '                        +
+                      '  ng-class="[value]" '                 +
+                      '  ng-keydown="handleKeydown($event)" ' +
+                      '  ng-click="handleClick()" '           +
+                      '  role="checkbox" '                    +
+                      '  aria-label="Turn off?" '             +
+                      '  ng-attr-aria-checked="{{value}}" '   +
+                      '  tabindex="0">'                       +
+                      ''                                      +
+                      '  <span class="side top">On</span>'    +
+                      '  <span class="side front">Off</span>' +
+                      '</boolean-pill>',
+            controller: function($scope) {
+              $scope.value = false;
+ 
+              $scope.handleClick = function() {
+                $scope.toggleVal();
+              };
+
+              $scope.handleKeydown = function(event) {
+                switch (event.keyCode) {
+                  case 13:
+                  case 32:
+                  case 37:
+                  case 38: 
+                  case 39:
+                  case 40:
+                    $scope.toggleVal();
+                    break;
+                };
+              };
+
+              $scope.toggleVal = function() {
+                var val = $scope.value ? false : true;
+                $scope.value = val;
+              };
+            }
+          };
+        });
+    </script> 
+  </body>
+</html>

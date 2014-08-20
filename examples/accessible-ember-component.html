@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="lib/jquery.js"></script>
+    <script src="lib/handlebars.js"></script>
+    <script src="lib/ember.js"></script>
+    <link href="styles.css" rel="stylesheet">  
+  </head>
+  <body>
+    <script type="text/x-handlebars">
+      {{boolean-pill}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="components/boolean-pill">
+      <span class="side top">Yes</span>
+      <span class="side front">No</span>
+    </script>
+      
+    <script>
+      var App = Ember.Application.create();
+      
+      App.BooleanPillComponent = Ember.Component.extend({
+        tagName: 'boolean-pill',
+        value: false,
+        classNameBindings: ['value:true:false'],
+        attributeBindings: ['ariaLabel:aria-label', 'ariaChecked:aria-checked', 'tabindex'],
+        tabindex: 0,
+        ariaRole: 'checkbox',
+        ariaLabel: 'Turn off?',
+        ariaChecked: function() {
+          return '' + this.get('value') // lol
+        }.property('value'),
+
+        toggleVal: function() {
+          this.toggleProperty('value');
+        },
+
+        click: function() {
+          this.toggleVal();
+        },
+
+        keyDown: function(event) {
+          switch (event.keyCode) {
+            case 13:
+            case 32:
+            case 37:
+            case 38: 
+            case 39:
+            case 40:
+              this.toggleVal();
+              break;
+          }
+        },
+      });
+
+    </script>
+  </body>
+</html>

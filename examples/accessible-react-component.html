@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="lib/react.js"></script>
+    <script src="lib/JSXTransformer.js"></script>
+    <link href="styles.css" rel="stylesheet">  
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+      var BooleanPill = React.createClass({
+        getDefaultProps: function() {
+          return {
+            value: false
+          };
+        },
+
+        toggleVal: function() {
+          var val = this.props.value ? false : true;
+
+          this.setProps({value: val});
+        },
+
+        handleClick: function(event) {
+          this.toggleVal();
+        },
+
+        handleKeyDown: function(event) {
+          switch (event.keyCode) {
+            case 13:
+            case 32:
+            case 37:
+            case 38: 
+            case 39:
+            case 40:
+              this.toggleVal();
+              break;
+          }
+        },
+
+        render: function() {
+          var classNames = 'boolean-pill ' + this.props.value;
+ 
+          return (
+            <div className={classNames} 
+                 onClick={this.handleClick}
+                 onKeyDown={this.handleKeyDown} 
+                 tabIndex="0"
+                 role="checkbox"
+                 aria-label="Turn off?"
+                 aria-checked={this.props.value}>
+              <span className="side top">Yes</span>
+              <span className="side front">No</span>
+            </div>
+          );
+        }
+      });
+
+      React.renderComponent(
+        <BooleanPill />,
+        document.getElementById('example')
+      );
+    </script>
+  </body>
+</html>

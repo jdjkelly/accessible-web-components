@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
+    <link href="styles.css" rel="stylesheet">  
+  </head>
+  <body>
+    <div ng-app="App">
+      <div boolean-pill></div>
+    </div>
+
+    <script>
+      angular.module('App', [])
+        .directive('booleanPill', function() {
+          return {
+            scope: {},
+            transclude: true,
+            template: '<boolean-pill ng-class="[value]" ng-click="toggleVal()">' +
+                      '  <span class="side top">On</span>' +
+                      '  <span class="side front">Off</span>' +
+                      '</boolean-pill>',
+            controller: function($scope) {
+              $scope.value = false;
+
+              $scope.toggleVal = function() {
+                var val = $scope.value ? false : true
+                $scope.value = val
+              };
+            }
+          };
+        });
+    </script> 
+  </body>
+</html>
