@@ -54,7 +54,7 @@
         border-radius: 5px;
       }
       .remark-code {
-        font-size: 24px;
+        font-size: 22px;
       }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
       .remark-code-line-highlighted     { background-color: #373832; }
@@ -68,13 +68,19 @@ class: center, middle, inverse
 ---
 # Accessible Web Components?
 ???
-- I have purposefully stashed both spelling mistakes and code errors throughout this
+I have purposefully stashed both spelling mistakes and code errors throughout this
  talk.
-- How many people have used Ember, React, Angular?
+How many people have used Ember, React, Angular?
 ---
-# tl:dr?
+# I'm @jdjkelly
+---
+# I work at Uniiverse
+???
+- Really, this talk is misnamed. It should be...
 ---
 # <span class="pink">Accessible!</span> Web Components
+???
+- That's because we should be excited about web accessibility. Unfortunately we tend to think of...
 ---
 # Accessible?
 ## Legal Obligations
@@ -182,7 +188,7 @@ class: center, middle, inverse
 - Open up voice over on a mac
 - Demo NYTimes.com
 ---
-# <span class="pink">DOM attributes</span> (defined by ARIA)i
+# <span class="pink">DOM attributes</span> (defined by ARIA)
 # &#8595;
 # Browser  
 # &#8595;
@@ -262,17 +268,352 @@ class: middle, center, inverse
 # What's a web component?
 ### How do we make accessible web components?
 ---
+# Squishy def'n
+???
+So lets talk about web components.
+What's a web component?
+We hear the phrase alot but it turns out that it has a really squishy meaning. 
+---
+### Formal def'n
+# Custom Elements + Shadow DOM + Imports
+???
+- Custom Elements
+- Shadow DOM (sort of like an iFrame without the frame)
+- HTML Imports (templating)
+---
+## Custom Elements
+```xml
+<vespene-gas></vespene-gas>
+```
+???
+- Custom elements with custom tag names
+---
+## Shadow DOM
+```xml
+<vespene-gas>
+  #shadow-root
+    <refinery>
+          138 remaining
+     </refinery>
+ </vespene-gas>
+```
+???
+- Encapsulation of the DOM inside a shadow-root. Sort of like an Iframe.
+- Event model where some events can cross the shadow boundry on some cannot
+---
+## Imports
+```xml
+  <link rel="import" href="vespene-gas-template.html">
+```
+```xml
+                       <!-- vespene-gas-template.html-->
+<template>
+                  <refinery>
+                   </refinery>
+ </template>
+```
+???
+We can import HTML fragments, and define templates using the new `<template>`tag
+We can clone the templates and attach them the shadow root of a custom element.
+String it all together and you've got yourself a web component.
+---
+### Informal def'n
+## React.createClass()
+## Ember.Component.extend()
+## Angular.directive()
+???
+- We can think of these as proto-components
+- They're capable of generating reusable DOM fragments, with custom elements, 
+  and some degree of encapsulation
+- Oh, and all three have tons of in-production examples today
+- Long term, Ember.Component is designed to produce 'native' Web Components, 
+  I imagine other frameworks/libs will follow suit.
+---
+### What makes a user interface accessible?
+### What's a web component?
+# How do we make accessible web components?
+???
+- Demo <a href="/examples/inaccessible-ember-component.html">/examples/inaccessible-ember-component.html</a>
+- Use Safari, there are some bugs in Chrome
+- Show click functionality
+- Attempt VoiceOver - prove it sucks
+---
+layout: true
+class: middle
+---
+## <span class="grey">One</span> Create the class/component/directive
+---
+## Ember.js: Define the Component
+### components/boolean-pill.js 
+```javascript
+App.BooleanPillComponent = Ember.Component.extend({
+  tagName: 'boolean-pill',
+  value: false,
+  classNameBindings: ['value:true:false'],
+  
+  click: function() {
+    this.toggleProperty('value');
+  }
+});
+```
+### templates/components/boolean-pill.hbs
+```xml
+<span class="side top">Yes</span>
+<span class="side front">No</span>
+```
+---
+## <span class="grey">Two</span> Assign ARIA role and properties
+---
+## Ember.js: Assign ARIA role and properties
+```javascript
+App.BooleanPillComponent = Ember.Component.extend({
+  tagName: 'boolean-pill',
+  value: false,
+  classNameBindings: ['value:true:false'],
+      
+*  attributeBindings: ['ariaLabel:aria-label', 
+*                      'tabindex'],
+*  tabindex: 0,
+*  ariaRole: 'checkbox',
+*  ariaLabel: 'Turn off?',
+
+  click: function() {
+    this.toggleProperty('value');
+  }
+});
+```
+???
+- ariaRole is automatically mapped to the role Attribute by Ember
+- lolbutwhy? Confusing.
+- we can arbitrarily output HTML on output
+---
+## <span class="grey">Three</span> Bind ARIA states
+---
+## Ember.js: Bind ARIA states
+```javascript
+App.BooleanPillComponent = Ember.Component.extend({
+  tagName: 'boolean-pill',
+  value: false,
+  classNameBindings: ['value:true:false'],
+      
+  attributeBindings: ['ariaLabel:aria-label', 
+*                      'ariaChecked:aria-checked',
+                      'tabindex'],
+  ...
+
+*  ariaChecked: function() {
+*    return '' + this.get('value')
+*  }.property('value'),
+
+  ...
+
+}); 
+```
+---
+## <span class="grey">Four</span> Create cross-input device event handlers
+---
+## Ember.js: Cross-input device event handlers
+```javascript
+App.BooleanPillComponent = Ember.Component.extend({
+  ...
+
+  toggleVal: function() {
+    this.toggleProperty('value');
+  },
+
+  click: function() {
+    this.toggleVal();
+  },
+
+  keyDown: function(event) {
+    switch (event.keyCode) {
+      case 13:
+      case 32:
+      case 37:
+      case 38: 
+      case 39:
+      case 40:
+        this.toggleVal();
+        break;
+    }
+  },
+
+});
+```
+---
+# <a href="/examples/accessible-ember-component.html">Demo</a>
+---
+# <a href="/examples/accessible-react-component.html">React</a>
+---
+## React: Define the Component
+```javascript
+var BooleanPill = React.createClass({
+  getDefaultProps: function() {
+    return { value: false };
+  },
+
+  handleClick: function() {
+    var val = this.props.value ? false : true;
+
+    this.setProps({value: val});
+  },
+
+  render: function() {
+    var classNames = 'boolean-pill ' + this.props.value;
+
+    return (
+      <div className={classNames} 
+           onClick={this.handleClick}
+        ...
+      </div>
+    );
+  }
+});
+```
+---
+## React: Assign ARIA roles and properties
+```javascript
+var BooleanPill = React.createClass({
+  ...
+
+  render: function() {
+    var classNames = 'boolean-pill ' + this.props.value;
+
+    return (
+      <div className={classNames} 
+           onClick={this.handleClick}
+*           tabIndex="0"
+*           role="checkbox"
+*           aria-label="Turn off?">
+        ...
+      </div>
+    );
+  }
+
+});
+```
+???
+- What's with React's support for aria-* in JSX instead of aria^*?
+---
+## React: Bind ARIA states
+```javascript
+var BooleanPill = React.createClass({
+  ...
+
+  render: function() {
+    var classNames = 'boolean-pill ' + this.props.value;
+
+    return (
+      <div className={classNames} 
+           onClick={this.handleClick}
+           tabIndex="0"
+           role="checkbox"
+           aria-label="Turn off?"
+*           aria-checked={this.props.value}>
+        ...
+      </div>
+    );
+  }
+
+});
+
+```
+---
+## React: Cross-input device event handlers
+```javascript
+var BooleanPill = React.createClass({
+
+*  toggleVal: function() {
+    var val = this.props.value ? false : true;
+
+    this.setProps({value: val});
+  },
+
+*  handleClick: function(event) {
+    this.toggleVal();
+  },
+
+*  handleKeyDown: function(event) {
+    switch (event.keyCode) {
+      case 13:
+      case 32:
+      case 37:
+      case 38: 
+      case 39:
+      case 40:
+        this.toggleVal();
+        break;
+    }
+  } 
+
+  ...
+``` 
+---
+```javascript
+  render: function() {
+    var classNames = 'boolean-pill ' + this.props.value;
+
+    return (
+      <div className={classNames} 
+*           onClick={this.handleClick}
+*           onKeyDown={this.handleKeyDown}></div>
+    );
+  }
+
+});
+
+```
+---
+# <a href="/examples/accessible-angular-directive.html">Angular</a>
+???
+- Feel free to check out the angular implementation. It's very similar - we're just creating a transcluded, isolate-scoped .directive()
+- JK super easy, looks like this...
+---
+```javascript
+ template:  '<boolean-pill '                        +
+            '  ng-class="[value]" '                 +
+*            '  ng-keydown="handleKeydown($event)" ' +
+*            '  ng-click="handleClick()" '           +
+            '  role="checkbox" '                    +
+            '  aria-label="Turn off?" '             +
+*            '  ng-attr-aria-checked="{{value}}" '   +
+            '  tabindex="0">'                       +
+            '  <span class="side top">On</span>'    +
+            '  <span class="side front">Off</span>' +
+            '</boolean-pill>',
+```
+???
+- That's a directive template defined in line
+- You can use the ng-attr directive to do the ARIA
+- Handle the click/keydown events in a controller, and update the value
+---
+layout: true
+class: middle, center, inverse
+---
+# tl:dr;
+---
+## Use your JavaScript lib/framework to render 
+## ARIA roles, properties, and states to the DOM
+---
+# <span class="pink">Accessibility!</span>
+???
+- Think opportunistically 
+--- 
+# Thanks
+### @marcysutton
+### @uniiverse
+### @torontojs
+???
+Random other closing notes:
 - lots of stupid browser bugs
 - control+option+space vs space
   - neither Firefox nor Chrome recognize that space should trigger the changed event (they don't)
   - control+option+space behaves differently in Chrome, reading the un/check event (correct),  vs. Firefox, always assuming 'check' (incorrect)
-- Why does React.js have have support for aria-* support? Why not just use aria^*?
-- Why does Ember use ariaRole? 
-- LOL BUT THIS: https://github.com/angular/angular.js/issues/5486
-- PR in Angular: https://github.com/angular/angular.js/pull/8342
-
+- Two PRs in Angular: https://github.com/angular/angular.js/issues/5486 and https://github.com/angular/angular.js/pull/8342
+---
+### Mandatory MongoDB sucks slide
   </textarea>
-    <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
+    <script src="remark-latest.min.js" type="text/javascript">
     </script>
     <script type="text/javascript">
       var slideshow = remark.create({

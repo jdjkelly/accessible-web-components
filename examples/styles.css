@@ -17,13 +17,17 @@ body {
   transition: all 0.85s cubic-bezier(.17,.67,.14,.93);
   transform-style: preserve-3d;
   transform-origin: 100% 50%;
+  -webkit-transition: all 0.85s cubic-bezier(.17,.67,.14,.93);
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform-origin: 100% 50%;
   width: 10em;
   height: 4em;
 }
 
 .boolean-pill:hover, boolean-pill:hover, .boolean-pill.true, boolean-pill.true {
-    transform: rotateX(-90deg);
-  }
+  transform: rotateX(-90deg);
+  -webkit-transform: rotateX(-90deg);
+}
 
 .side {
   box-sizing: border-box;
@@ -40,6 +44,7 @@ body {
   background: #fff;
   color: #222229;
   transform: rotateX(90deg) translate3d(0, 0, 2em);
+  -webkit-transform: rotateX(90deg) translate3d(0, 0, 2em);
 }
 
 .front {
@@ -47,4 +52,5 @@ body {
   color: #fff;
   box-shadow: inset 0 0 0 5px #fff;
   transform: translate3d(0, 0, 2em);
+  -webkit-transform: translate3d(0, 0, 2em);
 }
