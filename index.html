@@ -570,17 +570,17 @@ var BooleanPill = React.createClass({
 - JK super easy, looks like this...
 ---
 ```javascript
- template:  '<boolean-pill '                        +
-            '  ng-class="[value]" '                 +
-*            '  ng-keydown="handleKeydown($event)" ' +
-*            '  ng-click="handleClick()" '           +
-            '  role="checkbox" '                    +
-            '  aria-label="Turn off?" '             +
-*            '  ng-attr-aria-checked="{{value}}" '   +
-            '  tabindex="0">'                       +
-            '  <span class="side top">On</span>'    +
-            '  <span class="side front">Off</span>' +
-            '</boolean-pill>',
+<boolean-pill
+    ng-class="[value]"
+*    ng-keydown="handleKeydown($event)"
+*    ng-click="handleClick()"
+*    role="checkbox"
+*    aria-label="Turn off?"
+*    ng-attr-aria-checked="{{value}}"
+*    tabindex="0">
+  <span class="side top">On</span>
+  <span class="side front">Off</span>
+</boolean-pill>
 ```
 ???
 - That's a directive template defined in line
@@ -595,23 +595,22 @@ class: middle, center, inverse
 ## Use your JavaScript lib/framework to render 
 ## ARIA roles, properties, and states to the DOM
 ---
-# <span class="pink">Accessibility!</span>
-???
-- Think opportunistically 
---- 
 # Thanks
 ### @marcysutton
 ### @uniiverse
 ### @torontojs
+### <a class="pink" href="github.com/jdjkelly/accessible-web-components">github.com/jdjkelly/accessible-web-components</a>
 ???
 Random other closing notes:
 - lots of stupid browser bugs
 - control+option+space vs space
-  - neither Firefox nor Chrome recognize that space should trigger the changed event (they don't)
-  - control+option+space behaves differently in Chrome, reading the un/check event (correct),  vs. Firefox, always assuming 'check' (incorrect)
+- neither Firefox nor Chrome recognize that space should trigger the changed event (they don't)
+- control+option+space behaves differently in Chrome, reading the un/check event (correct),  vs. Firefox, always assuming 'check' (incorrect)
 - Two PRs in Angular: https://github.com/angular/angular.js/issues/5486 and https://github.com/angular/angular.js/pull/8342
 ---
-### Mandatory MongoDB sucks slide
+# Hey, Ember.js looks cool!
+## <a class="pink" href="https://unspace.ca/embergarten/">Embergarten</a>
+## September 13
   </textarea>
     <script src="remark-latest.min.js" type="text/javascript">
     </script>
